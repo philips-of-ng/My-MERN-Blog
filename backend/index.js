@@ -1,6 +1,7 @@
-import express from 'express'
+import express, { response } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import userRoutes from './routes/user.route.js'
 
 dotenv.config()
 
@@ -19,3 +20,5 @@ const HOST = '0.0.0.0'
 app.listen(PORT, HOST, () => {
   console.log(`Your server is running on Port ${PORT}, Host ${HOST}.`);
 })
+
+app.use('/api/user', userRoutes)
