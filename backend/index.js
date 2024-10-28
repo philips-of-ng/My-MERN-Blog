@@ -23,6 +23,7 @@ app.listen(PORT, HOST, () => {
 })
 
 app.use(express.json())
+
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)

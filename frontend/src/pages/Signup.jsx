@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Alert, Button, Label, TextInput } from 'flowbite-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Spinner, Alert, Button, Label, TextInput } from 'flowbite-react'
+// import Spinner from '../components/spinner'
 
 export default function Signup() {
 
   const [formData, setFormData] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.id]: e.target.value.trim })
+    setFormData({...formData, [e.target.id]: e.target.value.trim() })
   }
 
   const handleSubmit = async e => {
@@ -20,7 +22,9 @@ export default function Signup() {
     }
 
     try {
-      const response = await fetch('/api/auth/sign-up', {
+      setLoading(true)
+      setErrorMessage(null)
+      const response = await fetch('http://localhost:3000/api/auth/sign-up', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -29,8 +33,19 @@ export default function Signup() {
       console.log(response);
       const data = await response.json()
       console.log(data);
+
+      if ( data.message && data.message.includes('E11000') ) {
+        setErrorMessage('User already exist in our database...')
+      }
+
+      if (response.ok) {
+        navigate('/sign-in')
+      }
+
     } catch (error) {
-      console.log('Error signing up', error);
+      setErrorMessage(error.message)
+    } finally {
+      setLoading(false)
     }
 
   }
@@ -92,8 +107,13 @@ export default function Signup() {
             </div>
 
 
-            <Button className='w-full my-4' gradientDuoTone='purpleToPink' type='submit' >
-              Sign Up
+            <Button className='w-full my-4' gradientDuoTone='purpleToPink' type='submit' disabled={loading}>
+              {
+                loading ? 
+                <>
+                  <Spinner size='sm' /> <span className='pl-3'>Loading...</span>
+                </>  : 'Sign Up'
+              }
             </Button>
 
           </form>
