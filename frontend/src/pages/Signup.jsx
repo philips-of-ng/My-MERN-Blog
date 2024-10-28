@@ -1,9 +1,40 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Label, TextInput } from 'flowbite-react'
-
+import { Alert, Button, Label, TextInput } from 'flowbite-react'
 
 export default function Signup() {
+
+  const [formData, setFormData] = useState({})
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.id]: e.target.value.trim })
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    if (!formData.username || !formData.email || !formData.password) {
+      return setErrorMessage('Please fill out all fields...')
+    }
+
+    try {
+      const response = await fetch('/api/auth/sign-up', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      console.log(response);
+      const data = await response.json()
+      console.log(data);
+    } catch (error) {
+      console.log('Error signing up', error);
+    }
+
+  }
+
   return (
     <div className='min-h-screen mt-10'>
 
@@ -26,7 +57,7 @@ export default function Signup() {
         {/* RIGHT SIDE */}
         <div className='flex-1'>
 
-          <form className='my-5 flex flex-col'>
+          <form className='mt-4 flex flex-col' onSubmit={handleSubmit}>
 
             <div>
               <Label value='Your username' />
@@ -34,6 +65,7 @@ export default function Signup() {
                 type='text'
                 placeholder='Username'
                 id='username'
+                onChange={handleChange}
               />
             </div>
 
@@ -44,6 +76,7 @@ export default function Signup() {
                 type='email'
                 placeholder='me@example.com'
                 id='email'
+                onChange={handleChange}
               />
             </div>
 
@@ -54,6 +87,7 @@ export default function Signup() {
                 type='password'
                 placeholder='Password'
                 id='password'
+                onChange={handleChange}
               />
             </div>
 
@@ -70,6 +104,14 @@ export default function Signup() {
               Sign In
             </Link>
           </div>
+
+          {
+            errorMessage && (
+              <Alert className='mt-5' color='failure'>
+                {errorMessage}
+              </Alert>
+            )
+          }
 
         </div>
 

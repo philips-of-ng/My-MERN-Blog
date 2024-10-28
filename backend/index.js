@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import userRoutes from './routes/user.route.js'
 import authRoutes from './routes/auth.route.js'
+import cors from 'cors'
 
 dotenv.config()
 const db_password = process.env.DB_PASSWORD
@@ -22,6 +23,7 @@ app.listen(PORT, HOST, () => {
 })
 
 app.use(express.json())
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
 
