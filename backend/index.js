@@ -24,3 +24,14 @@ app.listen(PORT, HOST, () => {
 app.use(express.json())
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
+
+
+app.use((error, request, response, next) => {
+  const statusCode = error.statusCode || 500
+  const message = error.message || 'Internal Server Error'
+  response.status(statusCode).json({ 
+    success: false,
+    statusCode,
+    message
+   })
+})
